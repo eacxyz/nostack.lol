@@ -10,6 +10,10 @@ app.get('/', function(req, res) {
 server.on('request', app);
 server.listen(PORT, function () { console.log('Listening on ' + PORT); });
 
+/** Begin websocket */
+const WebSocketServer = require('ws').Server;
+const wss = new WebSocketServer({ server: server });
+
 process.on('SIGINT', () => {
   wss.clients.forEach(function each(client) {
     client.close();
@@ -17,11 +21,7 @@ process.on('SIGINT', () => {
   server.close(() => {
     shutdownDB();
   })
-})
-
-/** Begin websocket */
-const WebSocketServer = require('ws').Server;
-const wss = new WebSocketServer({ server: server });
+});
 
 wss.on('connection', function connection(ws) {
   const numClients = wss.clients.size;
